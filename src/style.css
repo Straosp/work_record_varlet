@@ -1,0 +1,33 @@
+body,html {
+  transition: background-color .25s, color .25s;
+  color: var(--color-text);
+  background-color: var(--color-body);
+}
+.var-input__input {
+  text-align: center !important;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.var-radio-group--horizontal {
+  justify-content: space-around;
+}
+.var-radio__wrap {
+  border: 1px solid var(--button-primary-color);
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
+}
+.var-radio__wrap:has(.var-radio--checked) {
+  background-color: var(--button-primary-color);
+  color: var(--button-primary-text-color);
+  --radio-text-color: "#FFFFFF"
+}
+.var-radio__text {
+  color: var(--button-primary-text-color);
+}
+.var-icon-radio-marked {
+  color: var(--button-primary-text-color) !important;
+}
+.var-field-decorator__placeholder {
+  padding-left: 5px;
+}
