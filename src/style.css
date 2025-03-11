@@ -31,3 +31,6 @@ body,html {
 .var-field-decorator__placeholder {
   padding-left: 5px;
 }
+.apexcharts-menu-icon {
+  display: none !important;
+}

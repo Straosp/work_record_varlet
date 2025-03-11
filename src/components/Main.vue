@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from "vue-router";
-import {LUNAR_YEAR_WORK_RECORDS_SUMMARY, WORK_RECORDS_MONTH_DETAIL} from "../net/app-url.ts";
+import {
+  LUNAR_YEAR_WORK_RECORDS_SUMMARY,
+  LUNAR_YEAR_WORK_SUMMARY_GROUP_MONTH,
+  WORK_RECORDS_MONTH_DETAIL
+} from "../net/app-url.ts";
 import {getRequest} from "../net/api.ts";
 import { type WorkRecord } from "../bean/WorkRecord";
 import {month, year} from "../util/date-util.ts";
 import type {LunarYearWorkSummary} from "../bean/LunarYearWorkSummary.ts";
+import type {MonthWorkSummary} from "../bean/MonthWorkSummary.ts";
+import { Chart } from "chart.js/auto";
 
 const router = useRouter();
 
@@ -19,6 +25,19 @@ let yearTotalSalary = ref(0);
 let yearSingleProductQuantity = ref(0);
 let yearMultipleProductQuantity = ref(0);
 let currentMonthWorkRecords = ref<WorkRecord[]>([]);
+
+let xAxisTitle = ref<string[]>([]);
+let yAxisMultipleProductQuantity = ref<number[]>([]);
+let yAxisSingleProductQuantity = ref<number[]>([]);
+let monthTotalSalary = ref<number[]>([]);
+
+let yMultipleSalary = ref<number[]>([]);
+let ySingleSalary = ref<number[]>([]);
+
+
+
+let chartSeries = ref({})
+let chartOptions = ref({})
 
 function exitLogin(){
   window.localStorage.removeItem("token")
@@ -80,6 +99,89 @@ function getLunarYearWorkRecordSummary(){
   })
 }
 
+function getLunarYearWorkSummaryGroupMonth(){
+  getRequest<MonthWorkSummary[]>(LUNAR_YEAR_WORK_SUMMARY_GROUP_MONTH,{
+    params: {
+      "year": year,
+    },
+    onSuccess: (data) => {
+      if (null == data) return;
+      xAxisTitle.value = data.map((s) => s .workDate);
+      yAxisMultipleProductQuantity.value = data.map((s) => s.totalMultipleProductQuantity);
+      yAxisSingleProductQuantity.value = data.map((s) => s.totalSingleProductQuantity);
+      monthTotalSalary.value = data.map((s) => s.totalSalary);
+      ySingleSalary.value = data.map((s) => {
+        let totalQuantity = s.totalMultipleProductQuantity + s.totalSingleProductQuantity;
+        return Math.round(s.totalSalary * ( s.totalSingleProductQuantity / totalQuantity ));
+      });
+      yMultipleSalary.value = data.map((s) => {
+        let totalQuantity = s.totalMultipleProductQuantity + s.totalSingleProductQuantity;
+        return Math.round(s.totalSalary * ( s.totalMultipleProductQuantity / totalQuantity ));
+      });
+      initChartBar();
+    },
+    onFailure: (_) => {
+
+    }
+  })
+}
+function initChartBar(){
+  let chartBar = document.getElementById("chart-bar") as HTMLCanvasElement;
+  new Chart(chartBar, {
+    type: "bar",
+    data: {
+      labels: xAxisTitle.value,
+      datasets: [
+        {
+          label: "月工资",
+          backgroundColor: "#F87979",
+          data: monthTotalSalary.value,
+          borderRadius: 5,
+          maxBarThickness: 30,
+          grouped: true,
+          order: 3
+        },
+        {
+          label: "单人产品数量",
+          backgroundColor: "rgba(121,168,238,0.56)",
+          data: yAxisSingleProductQuantity.value,
+          borderRadius: 5,
+          maxBarThickness: 30,
+          grouped: true,
+          order: 2
+        },
+        {
+          label: "多人产品数量",
+          backgroundColor: "#d423cc",
+          data: yAxisMultipleProductQuantity.value,
+          borderRadius: 5,
+          maxBarThickness: 30,
+          grouped: true,
+          order: 1
+        },
+      ]
+    },
+    options: {
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+        }
+      },
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        tooltip: {
+          enabled: true,
+        },
+      }
+    }
+  });
+}
+
 function calcTotalSalaryInDay(workRecord: WorkRecord) : number {
   if (workRecord.teamSize > 0){
     if (workRecord.singleProductQuantity > 0){
@@ -92,15 +194,13 @@ function calcTotalSalaryInDay(workRecord: WorkRecord) : number {
   }
 }
 
-
-
-
 onMounted(() => {
   if (window.localStorage.getItem("token") == null){
     router.push("/")
   }
   getCurrentMonthWorkRecord();
   getLunarYearWorkRecordSummary();
+  getLunarYearWorkSummaryGroupMonth();
 })
 
 </script>
@@ -155,6 +255,8 @@ onMounted(() => {
       </div>
     </var-space>
   </var-paper>
+
+  <canvas id="chart-bar"></canvas>
 
   <p class="work-record-title" v-show="currentMonthWorkRecords.length>0">本月工作记录</p>
   <div v-if="currentMonthWorkRecords.length>0" v-for="wk in currentMonthWorkRecords">
@@ -225,6 +327,10 @@ onMounted(() => {
   .card-item-title {
     margin: 8px auto;
     color: #000000;
+  }
+  .chart {
+    width: 100%;
+    height: 200px;
   }
 
 

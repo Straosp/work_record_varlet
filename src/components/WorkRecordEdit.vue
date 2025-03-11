@@ -6,6 +6,7 @@ import {currentDateToString} from "../util/date-util.ts";
 import {useRoute, useRouter} from "vue-router";
 import {Snackbar} from "@varlet/ui";
 import type {WorkRecord} from "../bean/WorkRecord.ts";
+import moment from "moment";
 
 let isShowPickerDateDialog = ref(false);
 let isShowDeleteDialog = ref(false);
@@ -66,6 +67,7 @@ function getWorkRecord(){
       multipleProductPrice.value = data.multipleProductPrice.toString();
       multiProductQuantity.value = data.multipleProductQuantity.toString();
       singleProductQuantity.value = data.singleProductQuantity.toString();
+      selectDate.value = moment(data.workDate).format("YYYY-MM-DD");
       if (data.singleProductPrice == data.multipleProductPrice){
         singleMultipleProductSamePrice.value = true;
       }
