@@ -232,7 +232,7 @@ watch(workTypeSelectValue, ()=> {
 
   <var-space class="work-record-date-space" align="center" direction="row" justify="space-between">
     <p class="work-record-date">{{selectDate}}</p>
-    <var-icon name="wrench" size="30" @click="openPickerDateDialog()"/>
+    <var-icon name="magnify" size="30" @click="openPickerDateDialog()"/>
   </var-space>
   <p class="work-type-title">请选择工作方式：</p>
   <var-radio-group
@@ -242,6 +242,7 @@ watch(workTypeSelectValue, ()=> {
       label-key="name"
       value-key="id"
   />
+
   <var-input
       class="work-input"
       v-model.number="teamSize"

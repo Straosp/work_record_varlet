@@ -11,7 +11,8 @@ import { type WorkRecord } from "../bean/WorkRecord";
 import {month, year} from "../util/date-util.ts";
 import type {LunarYearWorkSummary} from "../bean/LunarYearWorkSummary.ts";
 import type {MonthWorkSummary} from "../bean/MonthWorkSummary.ts";
-import { Chart } from "chart.js/auto";
+import {Chart, type TooltipItem} from "chart.js/auto";
+import {useColorMode} from "@vueuse/core";
 
 const router = useRouter();
 
@@ -42,6 +43,9 @@ let chartOptions = ref({})
 function exitLogin(){
   window.localStorage.removeItem("token")
   router.push('/')
+}
+function yearReport(){
+  router.push("/yearReport");
 }
 function toHistory(){
   router.push('/history')
@@ -125,6 +129,7 @@ function getLunarYearWorkSummaryGroupMonth(){
     }
   })
 }
+
 function initChartBar(){
   let chartBar = document.getElementById("chart-bar") as HTMLCanvasElement;
   new Chart(chartBar, {
@@ -134,7 +139,7 @@ function initChartBar(){
       datasets: [
         {
           label: "月工资",
-          backgroundColor: "#F87979",
+          backgroundColor: "#ee6666",
           data: monthTotalSalary.value,
           borderRadius: 5,
           maxBarThickness: 30,
@@ -143,36 +148,60 @@ function initChartBar(){
         },
         {
           label: "单人产品数量",
-          backgroundColor: "rgba(121,168,238,0.56)",
+          backgroundColor: "#fac858",
           data: yAxisSingleProductQuantity.value,
-          borderRadius: 5,
-          maxBarThickness: 30,
-          grouped: true,
-          order: 2
-        },
-        {
-          label: "多人产品数量",
-          backgroundColor: "#d423cc",
-          data: yAxisMultipleProductQuantity.value,
           borderRadius: 5,
           maxBarThickness: 30,
           grouped: true,
           order: 1
         },
+        {
+          label: "多人产品数量",
+          backgroundColor: "#5470c6",
+          data: yAxisMultipleProductQuantity.value,
+          borderRadius: 5,
+          maxBarThickness: 30,
+          grouped: true,
+          order: 2,
+        },
       ]
     },
     options: {
+      color: useColorMode().value == "light" ? "#000000" : "#FFFFFF",
+      maintainAspectRatio: false,
+      interaction: {
+        mode: "index",
+        intersect: false,
+      },
+      layout: {
+        autoPadding: false,
+        padding: 5,
+      },
       scales: {
         x: {
           stacked: true,
+          ticks: {
+            color: useColorMode().value == "light" ? "#000000" : "#FFFFFF"
+          },
+          grid: {
+            color: useColorMode().value == "light" ? "#CCCCCC" : "#919191",
+          }
         },
         y: {
-          stacked: true,
-        }
+          ticks: {
+            color: useColorMode().value == "light" ? "#000000" : "#FFFFFF"
+          },
+          grid: {
+            color: useColorMode().value == "light" ? "#CCCCCC" : "#919191",
+          }
+        },
       },
       plugins: {
         legend: {
           position: "top",
+          labels: {
+            color: useColorMode().value == "light" ? "#000000" : "#ffffff"
+          },
         },
         tooltip: {
           enabled: true,
@@ -180,6 +209,7 @@ function initChartBar(){
       }
     }
   });
+
 }
 
 function calcTotalSalaryInDay(workRecord: WorkRecord) : number {
@@ -216,6 +246,7 @@ onMounted(() => {
           <var-cell variant="text" @click="toAddUpdateWorkRecord(null)">添加记录</var-cell>
           <var-cell variant="text" @click="toHistory">历史记录</var-cell>
           <var-cell variant="text" @click="exitLogin">退出登录</var-cell>
+          <var-cell variant="text" @click="yearReport">年度报告</var-cell>
         </template>
       </var-menu>
     </template>
@@ -255,8 +286,9 @@ onMounted(() => {
       </div>
     </var-space>
   </var-paper>
-
-  <canvas id="chart-bar"></canvas>
+  <div class="chart-div">
+    <canvas id="chart-bar" class="chart-div"></canvas>
+  </div>
 
   <p class="work-record-title" v-show="currentMonthWorkRecords.length>0">本月工作记录</p>
   <div v-if="currentMonthWorkRecords.length>0" v-for="wk in currentMonthWorkRecords">
@@ -299,6 +331,7 @@ onMounted(() => {
     text-align: center;
     font-size: 20px;
     font-weight: bold;
+    margin: 0 auto;
   }
   .work-record-card {
     margin-top: 10px;
@@ -322,15 +355,14 @@ onMounted(() => {
     font-size: 25px;
     font-weight: bold;
     display: inline;
-    color: #000000;
   }
   .card-item-title {
     margin: 8px auto;
-    color: #000000;
   }
-  .chart {
+  .chart-div {
+    margin-top: 10px;
+    height: 280px;
     width: 100%;
-    height: 200px;
   }
 
 

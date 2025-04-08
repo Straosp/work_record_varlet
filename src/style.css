@@ -18,12 +18,11 @@ body,html {
   border-radius: 5px;
 }
 .var-radio__wrap:has(.var-radio--checked) {
-  background-color: var(--button-primary-color);
-  color: var(--button-primary-text-color);
-  --radio-text-color: "#FFFFFF"
+  background-color: var(--button-primary-color) !important;
+  color: var(--button-primary-text-color) !important;
 }
-.var-radio__text {
-  color: var(--button-primary-text-color);
+.var-radio__wrap:has(.var-radio--checked) .var-radio__text {
+  color: #FFFFFF !important;
 }
 .var-icon-radio-marked {
   color: var(--button-primary-text-color) !important;

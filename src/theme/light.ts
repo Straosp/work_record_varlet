@@ -55,5 +55,5 @@ export const lightTheme = Themes.toViewport({
     "--space-size-normal-y": "0px",
     "--date-picker-body-height": "auto",
     "--date-picker-body-padding": "0 10px 0 10px",
-    "--date-picker-header-padding": "5px"
+    "--date-picker-header-padding": "5px",
 })

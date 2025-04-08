@@ -224,10 +224,8 @@ onMounted(() => {
     font-size: 25px;
     font-weight: bold;
     display: inline;
-    color: #000000;
   }
   .card-item-title {
     margin: 8px auto;
-    color: #000000;
   }
 </style>

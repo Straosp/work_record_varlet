@@ -8,13 +8,12 @@ import {lightTheme} from "./theme/light.ts";
 import router from "./router.ts";
 import {useColorMode} from "@vueuse/core";
 import {darkTheme} from "./theme/dark.ts";
-
-// if (useColorMode().value == "light"){
-//     StyleProvider(lightTheme)
-// }else if(useColorMode().value == "dark"){
-//     StyleProvider(darkTheme)
-// }
-StyleProvider(lightTheme)
+//
+if (useColorMode().value == "light"){
+    StyleProvider(lightTheme)
+}else if(useColorMode().value == "dark"){
+    StyleProvider(darkTheme)
+}
 const app = createApp(App)
 app.use(Varlet)
     .use(router)

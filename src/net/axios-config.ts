@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 const httpRequest = axios.create({
-    baseURL: "http://10.10.10.10:8080/",
+    baseURL: "http://127.0.0.1:8080/",
     timeout: 100000,
     withCredentials: false,
     headers: {

@@ -4,6 +4,7 @@ import Login from "./components/Login.vue";
 import History from "./components/History.vue";
 import WorkRecordEdit from "./components/WorkRecordEdit.vue";
 import Register from "./components/Register.vue";
+import YearReport from "./components/YearReport.vue";
 
 const routes = [
     {
@@ -30,6 +31,11 @@ const routes = [
         path: "/register",
         name: "Register",
         component: Register,
+    },
+    {
+        path: "/yearReport",
+        name: "YearReport",
+        component: YearReport,
     }
 ]
 const router = createRouter({

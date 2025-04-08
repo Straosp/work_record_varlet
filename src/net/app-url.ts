@@ -12,3 +12,5 @@ export const ADD_WORK_RECORDS = "/workRecord";
 export const LUNAR_YEAR_WORK_RECORDS_SUMMARY = "/workRecord/lunar/summary";
 //获取农历年工作总结 按月结算
 export const LUNAR_YEAR_WORK_SUMMARY_GROUP_MONTH = "/workRecord/lunar/month/summary";
+// 获取年度总结报告
+export const YEAR_SUMMARY_REPORT = "/workRecord/lunar/year/report";
