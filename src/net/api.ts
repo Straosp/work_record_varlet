@@ -1,7 +1,7 @@
 import httpRequest from './axios-config.ts';
 
-//const TOKEN_FAILED =  401;
 const SUCCESS =  200;
+export const TOKEN_TIME_OUT = 303;
 
 export interface HttpResult<T> {
     code: number;
@@ -25,7 +25,7 @@ export interface RequestNoResultConfig {
 
 export async function getRequest<T>(url:string, requestConfig?: RequestConfig<T>) {
     const response = await httpRequest.get<HttpResult<T>>(url, { params: requestConfig?.params });
-    if (response.data.code === SUCCESS){
+    if (response.status === SUCCESS){
         let httpResult: HttpResult<T> = response.data;
         if (httpResult.code === SUCCESS) {
             requestConfig?.onSuccess(httpResult?.data)
@@ -44,7 +44,7 @@ export async function getRequest<T>(url:string, requestConfig?: RequestConfig<T>
 }
 export async function postRequestNoResult(url: string, requestConfig?: RequestNoResultConfig){
     const response = await httpRequest.post<HttpResult<any>>(url, requestConfig?.params);
-    if (response.data.code === SUCCESS){
+    if (response.status === SUCCESS){
         let httpResult: HttpResult<any> = response.data;
         if (httpResult.code === SUCCESS) {
             requestConfig?.onSuccess()
@@ -63,7 +63,7 @@ export async function postRequestNoResult(url: string, requestConfig?: RequestNo
 }
 export async function postRequest<T>(url: string, requestConfig?: RequestConfig<T>){
     const response = await httpRequest.post<HttpResult<T>>(url, requestConfig?.params);
-    if (response.data.code === SUCCESS){
+    if (response.status === SUCCESS){
         let httpResult: HttpResult<T> = response.data;
         if (httpResult.code === SUCCESS) {
             requestConfig?.onSuccess(response.data.data)
@@ -83,7 +83,7 @@ export async function postRequest<T>(url: string, requestConfig?: RequestConfig<
 
 export async function putRequest(url: string, requestConfig?:RequestNoResultConfig){
     const response = await httpRequest.put<HttpResult<any>>(url, requestConfig?.params);
-    if (response.data.code === SUCCESS){
+    if (response.status === SUCCESS){
         let httpResult: HttpResult<any> = response.data;
         if (httpResult.code === SUCCESS) {
             requestConfig?.onSuccess()
@@ -103,7 +103,7 @@ export async function putRequest(url: string, requestConfig?:RequestNoResultConf
 
 export async function delRequest(url: string, requestConfig?:RequestNoResultConfig){
     const response = await httpRequest.delete<HttpResult<any>>(url, requestConfig?.params);
-    if (response.data.code === SUCCESS){
+    if (response.status === SUCCESS){
         let httpResult: HttpResult<any> = response.data;
         if (httpResult.code === SUCCESS) {
             requestConfig?.onSuccess()

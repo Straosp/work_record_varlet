@@ -6,7 +6,7 @@ import {
   LUNAR_YEAR_WORK_SUMMARY_GROUP_MONTH,
   WORK_RECORDS_MONTH_DETAIL
 } from "../net/app-url.ts";
-import {getRequest} from "../net/api.ts";
+import {type ErrorMessage, getRequest, TOKEN_TIME_OUT} from "../net/api.ts";
 import { type WorkRecord } from "../bean/WorkRecord";
 import {month, year} from "../util/date-util.ts";
 import type {LunarYearWorkSummary} from "../bean/LunarYearWorkSummary.ts";
@@ -78,7 +78,11 @@ function getCurrentMonthWorkRecord(){
       monthSalary.value = data.reduce<number>((last,e)=> { return last + (calcTotalSalaryInDay(e)); },0 )
       currentMonthWorkRecords.value = data;
     },
-    onFailure: (_) => {
+    onFailure: (error?: ErrorMessage) => {
+      if (error?.code == TOKEN_TIME_OUT){
+        window.localStorage.removeItem("token");
+        router.replace("/")
+      }
       isShowMonthRecords.value = false;
     }
   })
@@ -97,7 +101,11 @@ function getLunarYearWorkRecordSummary(){
       yearSingleProductQuantity.value = data.totalSingleProductQuantity ?? 0;
       yearMultipleProductQuantity.value = data.totalMultipleProductQuantity ?? 0;
     },
-    onFailure: (_) => {
+    onFailure: (error?: ErrorMessage) => {
+      if (error?.code == TOKEN_TIME_OUT){
+        window.localStorage.removeItem("token");
+        router.replace("/")
+      }
       isShowMonthRecords.value = false;
     }
   })
@@ -124,8 +132,11 @@ function getLunarYearWorkSummaryGroupMonth(){
       });
       initChartBar();
     },
-    onFailure: (_) => {
-
+    onFailure: (error?: ErrorMessage) => {
+      if (error?.code == TOKEN_TIME_OUT){
+        window.localStorage.removeItem("token");
+        router.replace("/")
+      }
     }
   })
 }

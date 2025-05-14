@@ -3,7 +3,7 @@
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import { type WorkRecord} from "../bean/WorkRecord";
-import {delRequest, type ErrorMessage, getRequest} from "../net/api.ts";
+import {delRequest, type ErrorMessage, getRequest, TOKEN_TIME_OUT} from "../net/api.ts";
 import {month, year} from "../util/date-util";
 import {ADD_WORK_RECORDS, WORK_RECORDS_MONTH_DETAIL, WORK_RECORDS_MONTH_SUMMARY} from "../net/app-url.ts";
 import {Snackbar} from "@varlet/ui";
@@ -48,8 +48,11 @@ function getWorkRecordsSummary() {
       if (null == data) return;
       monthWorkRecords.value = data;
     },
-    onFailure: (err) => {
-      console.log(err);
+    onFailure: (error?: ErrorMessage) => {
+      if (error?.code == TOKEN_TIME_OUT){
+        window.localStorage.removeItem("token");
+        router.replace("/")
+      }
     }
   })
 }
@@ -67,8 +70,11 @@ function getWorkRecordsDetails() {
       monthSingleProductQuantity.value = data?.totalSingleProductQuantity
       monthSalary.value = data?.totalSalary
     },
-    onFailure: (err) => {
-      console.log(err);
+    onFailure: (error?: ErrorMessage) => {
+      if (error?.code == TOKEN_TIME_OUT){
+        window.localStorage.removeItem("token");
+        router.replace("/")
+      }
     }
   })
 }
@@ -154,7 +160,7 @@ onMounted(() => {
         <p class="card-item-title">本月工作天数</p>
       </div>
       <div class="card-item">
-        <p class="card-item-content">{{monthWorkProductQuantity}}</p>
+        <p class="card-item-content">{{monthWorkProductQuantity.toFixed(2)}}</p>
         <p class="card-item-title">本月产品件数</p>
       </div>
       <div class="card-item">
